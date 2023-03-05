@@ -1,5 +1,5 @@
-import * as Checkbox from "@radix-ui/react-checkbox"
 import { Check } from "phosphor-react"
+import * as Checkbox from "@radix-ui/react-checkbox"
 import { FormEvent, useState } from "react"
 import api from "../lib/axios"
 
@@ -23,6 +23,7 @@ function NewHabitForm() {
     if (!title || weekDays.length === 0) {
       return
     }
+
     await api.post("habits", {
       title,
       weekDays,
@@ -31,13 +32,12 @@ function NewHabitForm() {
     setTitle("")
     setWeekDays([])
 
-    alert("Habit created!")
+    alert("Habit created successfully!")
   }
 
-  function handleToogleWeekDay(weekDay: number) {
+  function handleToggleWeekDay(weekDay: number) {
     if (weekDays.includes(weekDay)) {
       const weekDaysWithRemovedOne = weekDays.filter(day => day !== weekDay)
-
       setWeekDays(weekDaysWithRemovedOne)
     } else {
       const weekDaysWithAddedOne = [...weekDays, weekDay]
@@ -46,44 +46,46 @@ function NewHabitForm() {
   }
 
   return (
-    <form onSubmit={createNewHabit} className="flex flex-col w-full mt-6">
-      <label htmlFor="title" className="leading-tight font-semibold">
-        What is your new habit?
+    <form onSubmit={createNewHabit} className="w-full flex flex-col mt-6">
+      <label htmlFor="title" className="font-semibold leading-tight">
+        What is your new habit?{" "}
       </label>
+
       <input
         type="text"
         id="title"
-        placeholder="ex. : Exercises, sleep 8 hours, etc...
-        "
-        className="p-4  rounded-lg mt-3 bg-zinc-800 text-white placeholder:text-zinc-400"
+        placeholder="ex.: Exercises, sleep 8 hours, etc..."
+        className="p-4 rounded-lg mt-3 bg-zinc-800 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:ring-offset-2 focus:ring-offset-zinc-900"
         autoFocus
         value={title}
         onChange={event => setTitle(event.target.value)}
       />
 
-      <label className="leading-tight font-semibold mt-4 mb-2" htmlFor="">
-        Which frequency?
+      <label htmlFor="" className="font-semibold leading-tight mt-4">
+        Which frequency?{" "}
       </label>
-      {availableWeekDays.map((day, index) => (
-        <div key={day} className="flex flex-col gap-3">
+
+      <div className="flex flex-col mt-3">
+        {availableWeekDays.map((weekDay, index) => (
           <Checkbox.Root
-            className="relative flex items-center gap-3 group w-full"
+            key={weekDay}
+            className="flex items-center gap-3 group focus:outline-none"
             checked={weekDays.includes(index)}
-            onCheckedChange={() => handleToogleWeekDay(index)}>
-            <div className="absolute left-0 h-8 w-8 rounded-lg flex items-center justify-center bg-zinc-900 border-2 border-zinc-800 group-data-[state=checked]:bg-green-500 group-data-[state=checked]:border-green-500">
+            onCheckedChange={() => handleToggleWeekDay(index)}>
+            <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-zinc-900 border-2 border-zinc-800 group-data-[state=checked]:bg-green-500 group-data-[state=checked]:border-green-50 transition-colors group-focus:ring-2 group-focus:ring-violet-600 group-focus:ring-offset-2 group-focus:ring-offset-background">
               <Checkbox.Indicator>
                 <Check size={20} className="text-white" />
               </Checkbox.Indicator>
             </div>
-            <span className="ml-6 leading-tight text-white font-bold">
-              {day}
-            </span>
+
+            <span className="text-white leading-tight">{weekDay}</span>
           </Checkbox.Root>
-        </div>
-      ))}
+        ))}
+      </div>
+
       <button
-        className="mt-6 rounded-lg p-4 gap-3 font-semibold bg-green-600 justify-center hover:bg-green-500 flex items-center"
-        type="submit">
+        type="submit"
+        className="mt-6 rounded-lg p-4 flex items-center justify-center gap-3 font-semibold bg-green-600 hover:bg-green-500 transition-colors focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-zinc-900">
         <Check size={20} weight="bold" />
         Confirm
       </button>
